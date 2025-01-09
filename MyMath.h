@@ -9,10 +9,6 @@ public:
 		return res;
 	}
 
-    string addGF8(string a, string b) {
-        return xorStr(a, b);
-    };
-
     string multiplyGF8(string a, string b) {
         if(a=="01") {
     		return b;
@@ -40,6 +36,10 @@ public:
 			return xorStr(b, multiplyGF8("02", b));
 		}
 		return "multiplyGF8 fail!";
+    };
+
+	string addGF8(string a, string b) {
+        return xorStr(a, b);
     };
 
     string xorStr(string a, string b) {
@@ -106,7 +106,7 @@ public:
 		}
 		return res;
 	}
-	
+
 	int mod(int a, int b) {
 		int res = a/b;
 		a -=  res * b;
