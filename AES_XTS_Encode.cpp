@@ -104,7 +104,7 @@ public:
 		}
 	}
 
-    string getSubBytes(char c1, char c2){
+    string replaceSBOX(char c1, char c2){
         int row = 0, col = 0;
         row = math.hexToDec(c1);
         col = math.hexToDec(c2);
@@ -114,7 +114,7 @@ public:
     string getSubBytes(string s){
     	string res = "";
         for (int i=0; i<s.size()-1; i+=2){
-		    res += (getSubBytes(s[i], s[i+1]));
+		    res += (replaceSBOX(s[i], s[i+1]));
 		}
 		return res;
     }
