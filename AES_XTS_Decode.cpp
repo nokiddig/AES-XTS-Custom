@@ -334,7 +334,7 @@ public:
 			string num[4];
 			for (int j=0; j<4; j++){
 				int col = math.mod(j + i, 4);
-				num[j] = matrix4x4[i][j];
+				num[j] = matrix4x4[i][col];
 			}
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = num[j];
@@ -349,7 +349,7 @@ public:
 			string num[4];
 			for (int j=0; j<4; j++){
 				int col = math.mod(j-i, 4);
-				num[j] = matrix4x4[i][j];
+				num[j] = matrix4x4[i][col];
 			}
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = num[j];
@@ -440,8 +440,10 @@ int main(){
 	AES_Decode dec;
 	AES enc;
 	enc.setupMatrix4x4(message);
-	dec.setupMatrix4x4("0189FE76ABDC5423BA3245CD1067EF98");
-
 	enc.shiftRows();
+	
+	dec.setupMatrix4x4("01ABBA1089DC3267FE5445EF7623CD98");
+
+	dec.printMatrix4x4();
 	dec.invertShiftRows();
 } 
