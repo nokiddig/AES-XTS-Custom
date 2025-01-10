@@ -10,40 +10,23 @@ public:
 		return res;
 	}
 
-	// a:xxxxxxxx b:xxxxxxxx
+	// a:xx b:xx
     string multiplyGF8(string a, string b) {
-        if(a=="01") {
-    		return b;
-		}
-		if(a=="02") {
-			vector<int> b0 = hexToBin(b[0]);
-			vector<int> b1 = hexToBin(b[1]);
-			for(int i=0; i<b0.size()-1; i++){
-				b0[i] = b0[i+1];
-			}
-			b0[b0.size()-1] = b1[0];
-			for(int i=0; i<b1.size()-1; i++){
-				b1[i] = b1[i+1];
-			}
-			b1[b1.size()-1] = 0;
-			string res = this->makeString(binToHex(b0), binToHex(b1));
-			if (hexToBin(b[0])[0] == 1){
-				//0001.1011 ~ 1B
-				return xorStr(res, "1B");
-			}
-			else
-				return res;
-		}
-		if (a=="03"){
-			return xorStr(b, multiplyGF8("02", b));
-		}
-		return "multiplyGF8 fail!";
+		vector<int> tmp;
+		vector<int> binA = hexToBin(a[0]), binB = hexToBin(b[0]);
+		tmp = hexToBin(a[1]);
+		binA.insert(tmp.end(), tmp.begin(), tmp.end());
+		tmp = hexToBin(b[1]);
+		binA.insert(tmp.end(), tmp.begin(), tmp.end());
+
+		
     };
 
 	string addGF8(string a, string b) {
         return xorStr(a, b);
     };
 
+	//a:xxxxxxxx b:xxxxxxxxx
     string xorStr(string a, string b) {
     	if (a=="" || b=="") return a+b;
     	string res = "";
