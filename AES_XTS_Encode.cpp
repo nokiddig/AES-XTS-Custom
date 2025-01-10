@@ -126,7 +126,8 @@ public:
 		for (int i=0; i<4; i++){
 			string num[4];
 			for (int j=0; j<4; j++){
-				num[j] = matrix4x4[i][math.mod(j + i, 4)];
+				int col = math.mod(j + i, 4);
+				num[j] = matrix4x4[i][j];
 			}
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = num[j];
