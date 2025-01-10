@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 class Math{
 public:
@@ -9,13 +10,14 @@ public:
 		return res;
 	}
 
+	// a:xxxxxxxx b:xxxxxxxx
     string multiplyGF8(string a, string b) {
         if(a=="01") {
     		return b;
 		}
 		if(a=="02") {
-			vector<int> b0 = hexToBin(b[0],4);
-			vector<int> b1 = hexToBin(b[1],4);
+			vector<int> b0 = hexToBin(b[0]);
+			vector<int> b1 = hexToBin(b[1]);
 			for(int i=0; i<b0.size()-1; i++){
 				b0[i] = b0[i+1];
 			}
@@ -25,7 +27,7 @@ public:
 			}
 			b1[b1.size()-1] = 0;
 			string res = this->makeString(binToHex(b0), binToHex(b1));
-			if (hexToBin(b[0],4)[0] == 1){
+			if (hexToBin(b[0])[0] == 1){
 				//0001.1011 ~ 1B
 				return xorStr(res, "1B");
 			}
@@ -46,8 +48,8 @@ public:
     	if (a=="" || b=="") return a+b;
     	string res = "";
     	for (int i=0; i<a.size()-1; i+=2){
-    		vector<int> vt1 = xorBit(hexToBin(a[i],4), hexToBin(b[i],4));
-	    	vector<int> vt2 = xorBit(hexToBin(a[i+1],4), hexToBin(b[i+1],4));
+    		vector<int> vt1 = xorBit(hexToBin(a[i]), hexToBin(b[i]));
+	    	vector<int> vt2 = xorBit(hexToBin(a[i+1]), hexToBin(b[i+1]));
 			res += this->makeString(binToHex(vt1),binToHex(vt2));
 		}    	
     	return res;
@@ -58,9 +60,9 @@ public:
 		return decToHex(dec);
 	}
 
-	vector<int> hexToBin(char c, int bit) {
+	vector<int> hexToBin(char c) {
 		int dec = hexToDec(c);
-		return decToBin(dec, bit);
+		return decToBin(dec);
 	}
 
 	char decToHex(int x) {
@@ -89,9 +91,9 @@ public:
 		return dec;
 	}
 
-	vector<int> decToBin(int num, int bit) {
-		vector<int> res(bit, 0);
-		int pos = bit;
+	vector<int> decToBin(int num) {
+		vector<int> res(4, 0);
+		int pos = 4;
 		while(num>0 && --pos>=0){
 			res[pos] = num%2;
 			num/=2;
@@ -155,3 +157,16 @@ const string INV_S_BOX[16][16] = {
 
 string RC[15] = {"","01", "02", "04", "08", "10", "20", "40", "80", "1B", "36", "6C", "D8", "AB", "4D"};
 
+
+const string MIX_MATRIX[4][4] = {  
+	{"02", "03", "01", "01"},
+	{"01", "02", "03", "01"},
+	{"01", "01", "02", "03"},
+	{"03", "01", "01", "02"}};
+
+const string INV_MIX_MATRIX[4][4] = {
+	{"0E", "0B", "0D", "09"},
+	{"09", "0E", "0B", "OD"},
+	{"0D", "09", "0E", "0B"},
+	{"0B", "0D", "09", "0E"}
+};

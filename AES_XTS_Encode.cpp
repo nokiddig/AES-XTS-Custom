@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "MyMath.h"
+#include "common.h"
 using namespace std;
 /*
     NOTE:

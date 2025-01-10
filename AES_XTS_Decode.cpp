@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "MyMath.h"
+#include "common.h"
 using namespace std;
 /*
     NOTE:
@@ -136,7 +136,7 @@ public:
 
     void mixColumns(){
         cout << "====Mix columns====\n";
-        string defMatrix[4][4] = {  {"02", "03", "01", "01"},
+        string MIX_MATRIX[4][4] = {  {"02", "03", "01", "01"},
         							{"01", "02", "03", "01"},
         							{"01", "01", "02", "03"},
         							{"03", "01", "01", "02"}};
@@ -151,7 +151,7 @@ public:
         		string mulMatrix = "";
         		//nhân lần lượt hàng với cột
 				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(defMatrix[i][k], oldMatrix4x4[k][j]));
+					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
 				}
 				matrix4x4[i][j] = mulMatrix; 
 			}
@@ -344,7 +344,7 @@ public:
     };
 
 	void invertShiftRows(){
-		cout << "====Shift Rows====\n";
+		cout << "====INV Shift Rows====\n";
 		for (int i=0; i<4; i++){
 			string num[4];
 			for (int j=0; j<4; j++){
@@ -360,7 +360,28 @@ public:
 
     void mixColumns(){
         cout << "====Mix columns====\n";
-        string defMatrix[4][4] = {  {"02", "03", "01", "01"},
+        string oldMatrix4x4[4][4];
+        //clone vector
+        for (int i=0; i<BLOCK_SIZE; i++)
+			for (int j=0; j<BLOCK_SIZE; j++)
+			 	oldMatrix4x4[i][j] = matrix4x4[i][j];
+        
+		for (int i=0; i<4; i++){
+        	for (int j=0; j<4; j++){
+        		string mulMatrix = "";
+        		//nhân lần lượt hàng với cột
+				for (int k = 0; k < 4; k ++){
+					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
+				}
+				matrix4x4[i][j] = mulMatrix; 
+			}
+		}
+		printMatrix4x4();
+    };
+
+	void invertMixColumns(){
+        cout << "====INV Mix columns====\n";
+        string MIX_MATRIX[4][4] = {  {"02", "03", "01", "01"},
         							{"01", "02", "03", "01"},
         							{"01", "01", "02", "03"},
         							{"03", "01", "01", "02"}};
@@ -375,7 +396,7 @@ public:
         		string mulMatrix = "";
         		//nhân lần lượt hàng với cột
 				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(defMatrix[i][k], oldMatrix4x4[k][j]));
+					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
 				}
 				matrix4x4[i][j] = mulMatrix; 
 			}
@@ -423,27 +444,22 @@ public:
 };
 
 int main(){
-	string key, message;
+	string key, message, cipher;
 	// freopen("input.txt", "r", stdin);
 	// //	cin >> Key >> message;
-	key = "0f1571c947d9e8590cb7add6af7f6798";
-	message = "0123456789abcdeffedcba9876543210";
-	transform(message.begin(), message.end(), message.begin(), ::toupper);
-	// // CIPHER = "ff0b844a0853bf7c6934ab4364148fb9";
+	// key = "0f1571c947d9e8590cb7add6af7f6798";
+	// message = "0123456789abcdeffedcba9876543210";
+	// cipher = "ff0b844a0853bf7c6934ab4364148fb9";
+	// transform(message.begin(), message.end(), message.begin(), ::toupper);
+	// transform(cipher.begin(), cipher.end(), cipher.begin(), ::toupper);
 
-    // AES_Decode a;
-    // a.setKey(key);
-    // string encode = a.encode(message);
-    // string decode = a.decode(encode);
-	// cout << encode << endl;
-	// cout << decode;
-	AES_Decode dec;
-	AES enc;
-	enc.setupMatrix4x4(message);
-	enc.shiftRows();
+	// AES_Decode dec;
+	// AES enc;
+	// enc.setupMatrix4x4(message);
+	// enc.mixColumns();
 	
-	dec.setupMatrix4x4("01ABBA1089DC3267FE5445EF7623CD98");
-
-	dec.printMatrix4x4();
-	dec.invertShiftRows();
+	// dec.setupMatrix4x4("01ABBA1089DC3267FE5445EF7623CD98");
+	// dec.invertShiftRows();
+	Math math;
+	cout << math.decToHex(15);
 } 
