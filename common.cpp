@@ -179,8 +179,8 @@ const string INV_MIX_MATRIX[4][4] = {
 };
 
 
-// int main() {
+int main() {
 
-// 	Math math;
-// 	cout << math.multiplyGF8("57", "84");
-// }
+	Math math;
+	cout << math.multiplyGF8("57", "84");
+}

@@ -461,5 +461,5 @@ int main(){
 	// dec.setupMatrix4x4("01ABBA1089DC3267FE5445EF7623CD98");
 	// dec.invertShiftRows();
 	Math math;
-	cout << math.decToHex(15);
+	cout << math.multiplyGF8();
 } 
