@@ -16,7 +16,8 @@ private:
 	int KEY_LENGTH = 0;
     const int BLOCK_SIZE = 4;
     string plainText = "", KEY;
-    
+    string process;
+	const string EN = "ENCODE", DE = "DECODE";
 	string w[50];
     string matrix4x4[4][4];
 	//dam bao ko tuyen tinh -> tinh ngau nhien cao
@@ -89,7 +90,12 @@ public:
         int row = 0, col = 0;
         row = math.hexToDec(c1);
         col = math.hexToDec(c2);
-        return S_BOX[row][col];
+		if (process == EN){
+        	return S_BOX[row][col];
+		}
+		else {
+        	return INV_S_BOX[row][col];
+		}
     }
 
     string getSubBytes(string s){
@@ -126,7 +132,12 @@ public:
 		for (int i=0; i<4; i++){
 			string num[4];
 			for (int j=0; j<4; j++){
-				int col = math.mod(j + i, 4);
+				int col;
+				if (process==EN)
+					col = math.mod(j + i, 4);
+				else {
+					col = math.mod(j - i, 4);
+				}
 				num[j] = matrix4x4[i][col];
 			}
 			for (int j=0; j<4; j++){
@@ -138,12 +149,8 @@ public:
 
     void mixColumns(){
         cout << "====Mix columns====\n";
-        string defMatrix[4][4] = {  {"02", "03", "01", "01"},
-        							{"01", "02", "03", "01"},
-        							{"01", "01", "02", "03"},
-        							{"03", "01", "01", "02"}};
+		//clone vector
         string oldMatrix4x4[4][4];
-        //clone vector
         for (int i=0; i<BLOCK_SIZE; i++)
 			for (int j=0; j<BLOCK_SIZE; j++)
 			 	oldMatrix4x4[i][j] = matrix4x4[i][j];
@@ -153,7 +160,14 @@ public:
         		string mulMatrix = "";
         		//nhân lần lượt hàng với cột
 				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(defMatrix[i][k], oldMatrix4x4[k][j]));
+					string mulStr;
+					if (process == EN) {
+						mulStr = math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]);
+					}
+					else {
+						mulStr = math.multiplyGF8(INV_MIX_MATRIX[i][k], oldMatrix4x4[k][j]);
+					}
+					mulMatrix = math.xorStr(mulMatrix, mulStr);
 				}
 				matrix4x4[i][j] = mulMatrix; 
 			}
@@ -171,17 +185,18 @@ public:
 		printMatrix4x4();
 	}
 
-	string setCipherText(){
-		string cipherText = "";
+	string getTextFromMatrix4x4(){
+		string text = "";
 		for (int i=0; i<4; i++){
 			for (int j=0; j<4; j++){
-				cipherText += matrix4x4[j][i];
+				text += matrix4x4[j][i];
 			}
 		}
-		return cipherText;
+		return text;
 	}
 
     string encode(string message){
+		this->process = EN;
 		transform(message.begin(), message.end(), message.begin(), ::toupper);
         this->plainText = message;
 		this->setupMatrix4x4(message);
@@ -190,22 +205,22 @@ public:
 		this->addRoundKey(0);
 		for (int i=1; i<=nRound; i++){
     		cout << "\nRound " << i << endl;
-    		
 	        this->substituteBytes();
 	        this->shiftRows();
 	        if (i!=10)
 	        	this->mixColumns();
 			this->addRoundKey(i);
 		}
-        return setCipherText();
+        return getTextFromMatrix4x4();
     }
 	
 	string decode(string cipher) {
+		this->process = DE;
 		transform(cipher.begin(), cipher.end(), cipher.begin(), ::toupper);
         this->plainText = cipher;
 		this->setupMatrix4x4(cipher);
 		
-		// AES algorithm
+		// AES_Decode algorithm
 		this->addRoundKey(nRound);
 		for (int i=nRound-1; i>=0; i--){
     		cout << "\nRound " << i << endl;
@@ -215,7 +230,7 @@ public:
 			if (i!=0)
 	        	this->mixColumns(); //invert
 		}
-		return setCipherText();
+		return getTextFromMatrix4x4();
 	}
 };
 
