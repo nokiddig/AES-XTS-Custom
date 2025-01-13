@@ -12,8 +12,20 @@ public:
 		return res;
 	}
 
-	uint8_t hexToByte(const string& hex) {
-		return static_cast<uint8_t>(stoi(hex, nullptr, 16));
+	uint8_t hexToByte(const string hexString) {
+		try {
+			// Chuyển đổi sang số thập lục phân
+			int hexValue = stoi(hexString, nullptr, 16);
+			
+			// cout << "Hexadecimal string: " << hexString << endl;
+			// cout << "Decimal value: " << hexValue << endl;
+			// cout << "Hexadecimal value (as hex): 0x" << hex << uppercase << hexValue << endl;
+		} catch (const invalid_argument& e) {
+			cout << "Invalid input: " << hexString << e.what() << endl;
+		} catch (const out_of_range& e) {
+			cout << "Input out of range: " << hexString << e.what() << endl;
+		}
+		return static_cast<uint8_t>(stoi(hexString, nullptr, 16));
 	}
 
 	// Hàm chuyển số nguyên (uint8_t) thành chuỗi hex ("C1")
@@ -173,7 +185,7 @@ const string MIX_MATRIX[4][4] = {
 
 const string INV_MIX_MATRIX[4][4] = {
 	{"0E", "0B", "0D", "09"},
-	{"09", "0E", "0B", "OD"},
+	{"09", "0E", "0B", "0D"},
 	{"0D", "09", "0E", "0B"},
 	{"0B", "0D", "09", "0E"}
 };

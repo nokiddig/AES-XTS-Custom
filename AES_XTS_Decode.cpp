@@ -358,33 +358,8 @@ public:
 		printMatrix4x4();
     };
 
-    void mixColumns(){
-        cout << "====Mix columns====\n";
-        string oldMatrix4x4[4][4];
-        //clone vector
-        for (int i=0; i<BLOCK_SIZE; i++)
-			for (int j=0; j<BLOCK_SIZE; j++)
-			 	oldMatrix4x4[i][j] = matrix4x4[i][j];
-        
-		for (int i=0; i<4; i++){
-        	for (int j=0; j<4; j++){
-        		string mulMatrix = "";
-        		//nhân lần lượt hàng với cột
-				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
-				}
-				matrix4x4[i][j] = mulMatrix; 
-			}
-		}
-		printMatrix4x4();
-    };
-
 	void invertMixColumns(){
         cout << "====INV Mix columns====\n";
-        string MIX_MATRIX[4][4] = {  {"02", "03", "01", "01"},
-        							{"01", "02", "03", "01"},
-        							{"01", "01", "02", "03"},
-        							{"03", "01", "01", "02"}};
         string oldMatrix4x4[4][4];
         //clone vector
         for (int i=0; i<BLOCK_SIZE; i++)
@@ -396,7 +371,7 @@ public:
         		string mulMatrix = "";
         		//nhân lần lượt hàng với cột
 				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
+					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(INV_MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
 				}
 				matrix4x4[i][j] = mulMatrix; 
 			}
@@ -433,11 +408,11 @@ public:
 		this->addRoundKey(nRound);
 		for (int i=nRound-1; i>=0; i--){
     		cout << "\nRound " << i << endl;
-    		this->shiftRows(); //invert
+    		this->invertShiftRows(); //invert
 	        this->invertSubstituteBytes(); //invert
 			this->addRoundKey(i);
 			if (i!=0)
-	        	this->mixColumns(); //invert
+	        	this->invertMixColumns(); //invert
 		}
 		return setCipherText();
 	}
@@ -445,21 +420,21 @@ public:
 
 int main(){
 	string key, message, cipher;
-	// freopen("input.txt", "r", stdin);
-	// //	cin >> Key >> message;
-	// key = "0f1571c947d9e8590cb7add6af7f6798";
-	// message = "0123456789abcdeffedcba9876543210";
-	// cipher = "ff0b844a0853bf7c6934ab4364148fb9";
-	// transform(message.begin(), message.end(), message.begin(), ::toupper);
-	// transform(cipher.begin(), cipher.end(), cipher.begin(), ::toupper);
+	freopen("input.txt", "r", stdin);
+	//	cin >> Key >> message;
+	key = "0F1571C947D9E8590CB7ADD6AF7F6798";
+	message = "0123456789ABCDEFFEDCBA9876543210";
+	cipher = "FF0B844A0853BF7C6934AB4364148FB9";
 
-	// AES_Decode dec;
-	// AES enc;
-	// enc.setupMatrix4x4(message);
-	// enc.mixColumns();
-	
-	// dec.setupMatrix4x4("01ABBA1089DC3267FE5445EF7623CD98");
-	// dec.invertShiftRows();
-	Math math;
-	cout << math.multiplyGF8();
+    AES en;
+	AES_Decode de;
+
+    en.setKey(key);
+	de.setKey(key);
+
+	en.setupMatrix4x4(message);
+	en.mixColumns();
+
+	de.setupMatrix4x4("45EF01ABCD678923BA10FE54329876DC");
+	de.invertMixColumns();
 } 
