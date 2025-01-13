@@ -8,6 +8,7 @@ using namespace std;
     Size khoa(key): 128/192/256-b
 */
 
+string w[50];
 class AES{
 private:
 	Math math;
@@ -15,8 +16,6 @@ private:
 	int KEY_LENGTH = 0;
     const int BLOCK_SIZE = 4;
     string plainText = "", KEY;
-    
-	string w[50];
     string matrix4x4[4][4];
 	//dam bao ko tuyen tinh -> tinh ngau nhien cao
 public:
@@ -45,7 +44,7 @@ public:
 				cout << "Key error!";
 				break;
 		}
-		cout << "Key length" << KEY_LENGTH;
+		cout << "Key length" << KEY_LENGTH << endl;
         this->expandKey();
 	}
 
@@ -125,7 +124,8 @@ public:
 		for (int i=0; i<4; i++){
 			string num[4];
 			for (int j=0; j<4; j++){
-				num[j] = matrix4x4[i][math.mod(j + i, 4)];
+				int col = math.mod(j + i, 4);
+				num[j] = matrix4x4[i][col];
 			}
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = num[j];
@@ -136,7 +136,7 @@ public:
 
     void mixColumns(){
         cout << "====Mix columns====\n";
-        string MIX_MATRIX[4][4] = {  {"02", "03", "01", "01"},
+        string defMatrix[4][4] = {  {"02", "03", "01", "01"},
         							{"01", "02", "03", "01"},
         							{"01", "01", "02", "03"},
         							{"03", "01", "01", "02"}};
@@ -151,7 +151,7 @@ public:
         		string mulMatrix = "";
         		//nhân lần lượt hàng với cột
 				for (int k = 0; k < 4; k ++){
-					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(MIX_MATRIX[i][k], oldMatrix4x4[k][j]));
+					mulMatrix = math.xorStr(mulMatrix, math.multiplyGF8(defMatrix[i][k], oldMatrix4x4[k][j]));
 				}
 				matrix4x4[i][j] = mulMatrix; 
 			}
@@ -160,7 +160,7 @@ public:
     };
 
 	void addRoundKey(int nRound){
-		cout << "===Add round key:===\n";
+		cout << "===Add round key: " << nRound << "===\n";
 		for (int i=0; i<4; i++){
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = math.xorStr(matrix4x4[i][j], w[nRound*4+j].substr(i*2, 2)); 
@@ -218,71 +218,21 @@ public:
 };
 
 
+
 class AES_Decode{
 private:
 	Math math;
-    int nRound = 0;
+    int nRound = 10;
 	int KEY_LENGTH = 0;
     const int BLOCK_SIZE = 4;
     string plainText = "", KEY;
-    
-	string w[50];
     string matrix4x4[4][4];
 public:
-    AES_Decode(){};
-
-	AES_Decode(string key){
-		this->setKey(key);
-    };
-
-	void setKey(string key) {
-		transform(key.begin(), key.end(), key.begin(), ::toupper);
-		this->KEY = key;
-		this->KEY_LENGTH = KEY.size()*4;
-		switch (KEY_LENGTH){
-			case 128:
-				this->nRound = 10;
-				break;
-			case 192:
-				this->nRound = 12;
-				break;
-			case 256:
-				this->nRound = 14;
-				break;
-			default:
-				this->nRound = 0;
-				cout << "Key error!";
-				break;
-		}
-		cout << "Key length" << KEY_LENGTH;
-        this->expandKey();
+	void printKey(){
+		for (int i=0; i<50; i++)
+			cout << w[i] << endl;
 	}
-
-    // mo rong khoa rc = 2^x -> hex
-    void expandKey(){
-		w[0] = KEY.substr(0, 8);
-		w[1] = KEY.substr(8, 8);
-		w[2] = KEY.substr(16, 8);
-		w[3] = KEY.substr(24, 8);
-		string RC[15] = {"","01", "02", "04", "08", "10", "20", "40", "80", "1B", "36", "6C", "D8", "AB", "4D"};
-		
-    	for (int i=1; i<=nRound; i++){
-    		string g = w[i*4-1];
-    		//dich vong trai 1 byte(2char)
-    		g += g.substr(0,2);
-    		g = g.substr(2, 8);
-    		//the' s_box
-    		g = this->getSubBytes(g);
-    		//xor vs rcon
-			string RCON = RC[i] + "00" + "00" + "00";
-    		g = math.xorStr(g,RCON);
-    		//xor -> w[i]..w[i+3]
-    		w[i*4] = math.xorStr(g, w[i*4-4]);
-    		for (int j=1; j<4; j++){
-    			w[i*4+j] = math.xorStr(w[i*4+j-1], w[i*4+j-4]);
-			}
-		}
-	};
+    AES_Decode(){};
 
     void setupMatrix4x4(string message) {
     	for (int i=0; i<4; i++){
@@ -380,7 +330,7 @@ public:
     };
 
 	void addRoundKey(int nRound){
-		cout << "===Add round key:===\n";
+		cout << "===Add round key: " << nRound << "===\n";
 		for (int i=0; i<4; i++){
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = math.xorStr(matrix4x4[i][j], w[nRound*4+j].substr(i*2, 2)); 
@@ -426,15 +376,15 @@ int main(){
 	message = "0123456789ABCDEFFEDCBA9876543210";
 	cipher = "FF0B844A0853BF7C6934AB4364148FB9";
 
-    AES en;
+	AES en;
 	AES_Decode de;
+	en.setKey(key);
+	de.decode(cipher);
+	// de.printKey();
+	// en.addRoundKey(10);
+	// en.addRoundKey(10);
 
-    en.setKey(key);
-	de.setKey(key);
-
-	en.setupMatrix4x4(message);
-	en.mixColumns();
-
-	de.setupMatrix4x4("45EF01ABCD678923BA10FE54329876DC");
-	de.invertMixColumns();
+	// de.setKey(key);
+	// de.setupMatrix4x4(cipher);
+	// de.addRoundKey(10);
 } 

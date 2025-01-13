@@ -162,7 +162,7 @@ public:
     };
 
 	void addRoundKey(int nRound){
-		cout << "===Add round key:===\n";
+		cout << "===Add round key: " << nRound << "===\n";
 		for (int i=0; i<4; i++){
 			for (int j=0; j<4; j++){
 				matrix4x4[i][j] = math.xorStr(matrix4x4[i][j], w[nRound*4+j].substr(i*2, 2)); 
