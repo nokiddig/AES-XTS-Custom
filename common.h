@@ -188,10 +188,3 @@ const string INV_MIX_MATRIX[4][4] = {
 	{"0D", "09", "0E", "0B"},
 	{"0B", "0D", "09", "0E"}
 };
-
-
-// int main() {
-
-// 	Math math;
-// 	cout << math.multiplyGF8("57", "84");
-// }
