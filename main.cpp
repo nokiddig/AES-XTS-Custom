@@ -1,7 +1,13 @@
 #include <iostream>
-#include "AES_XTS.h"
+#include "AES_ECB.h"
 
 using namespace std;
+class AES_XTS{
+private:
+    AES_ECB aes_key1;
+    AES_ECB aes_key2;
+public:
+}
 
 
 int main(){
@@ -12,7 +18,7 @@ int main(){
 	message = "0123456789abcdeffedcba9876543210";
 	// CIPHER = "ff0b844a0853bf7c6934ab4364148fb9";
 
-    AES a;
+    AES_ECB a;
     a.setKey(key);
     string encode = a.encode(message);
     string decode = a.decode(encode);
