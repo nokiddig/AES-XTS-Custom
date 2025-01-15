@@ -1,13 +1,48 @@
 #include <iostream>
 #include "AES_ECB.h"
 
+
 using namespace std;
+
+
+class Preprocess{
+private:
+	string message;
+public:
+	Preprocess(){}
+
+	Preprocess(string message){
+		this->message = message;
+	}
+
+	void addPadding(){
+
+	}
+	void removePadding(){
+
+	}
+	vector<string> splitBlock(){
+
+	}
+
+};
+
 class AES_XTS{
 private:
     AES_ECB aes_key1;
     AES_ECB aes_key2;
 public:
-}
+	AES_XTS(){};
+
+	void calculate_tweak0(){}
+
+	void generate_tweak(){}
+
+	void encode(){}
+
+	void decode(){}
+
+};
 
 
 int main(){
@@ -24,4 +59,6 @@ int main(){
     string decode = a.decode(encode);
 	cout << encode << endl;
 	cout << decode;
+	// Math math;
+	// cout << math.xorStr("123456", "000000");
 } 
