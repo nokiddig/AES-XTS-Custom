@@ -134,6 +134,71 @@ public:
 	}
 };
 
+class Preprocess{
+private:
+	string message;
+	Math math;
+public:
+	Preprocess(){}
+
+	Preprocess(string message){
+		this->message = message;
+	}
+
+	string toHexString(int num){
+		stringstream ss;
+		ss << uppercase << setw(2) << setfill('0') << hex << (int)num;
+		return ss.str();
+	}
+
+	char hexToAscii(const std::string& hex) {
+		// Chuyển chuỗi hex thành số nguyên
+		int asciiValue;
+		std::stringstream ss;
+		ss << std::hex << hex;
+		ss >> asciiValue;
+
+		// Chuyển giá trị số thành ký tự ASCII
+		return static_cast<char>(asciiValue);
+	}
+
+	string pkcs5_pad(const string& input, int blockSize=16) {
+		string res = "";
+		for (unsigned char c : input) {
+			res += toHexString(c);
+		}
+
+		// Thêm padding PKCS#5
+		int paddingSize = blockSize - (input.size() % blockSize);
+		for (int i = 0; i < paddingSize; i++) {
+			res += toHexString(paddingSize);
+		}
+
+		return res;
+	}
+
+	// Bỏ padding PKCS#5
+	string pkcs5_unpad(string padded_data, int blockSize=16) {
+		int padSize = math.hexToDec(padded_data.back());
+		padSize += blockSize * (padSize==0);
+		padded_data.erase(padded_data.size()-padSize*2, padSize*2);
+		string res = "";
+		for (int i=0; i+2<=padded_data.size(); i+=2) {
+			res += hexToAscii(padded_data.substr(i, 2));
+		}
+		return res;
+	}
+
+	vector<string> splitBlock(string message, int blockSize = 16){
+		vector<string> result;
+		for (size_t i = 0; i < message.length(); i += blockSize) {
+			result.push_back(message.substr(i, blockSize));
+		}
+		return result;
+	}
+
+};
+
 //dam bao ko tuyen tinh -> tinh ngau nhien cao
 const string S_BOX[16][16] = {
         {"63", "7C", "77", "7B", "F2", "6B", "6F", "C5", "30", "01", "67", "2B", "FE", "D7", "AB", "76"},
@@ -188,3 +253,9 @@ const string INV_MIX_MATRIX[4][4] = {
 	{"0D", "09", "0E", "0B"},
 	{"0B", "0D", "09", "0E"}
 };
+
+template <typename T>
+void printVector(vector<T> v){
+	for (auto x: v)
+		cout << x << " ";
+}
