@@ -107,16 +107,20 @@ public:
 
 
 int main(){
-	string key1, key2, message, cipher;
-	key1 = key2 = 	"0f1571c947d9e8590cb7add6af7f6798";
+	string key1Hex, key2Hex, message, cipherECB;
+	key1Hex = 		"0f1571c947d9e8590cb7add6af7f6798";
+	key2Hex = 		"81932804fdaea2347342836120132318";
 	message = 		"0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210";
-	cipher = 		"ff0b844a0853bf7c6934ab4364148fb9";
+	cipherECB = 	"ff0b844a0853bf7c6934ab4364148fb9";
 
 	Preprocess pre;
-	auto x = pre.splitBlock(message);
+	auto x = pre.splitBlock(pre.toHexString("Toi yeu viet nam"));
 	printVector(x);
-	AES_XTS aes(key1, key2);
-	auto res = aes.encodeMess(x);
+
+	AES_XTS aes_xts(key1Hex, key2Hex);
+	auto res = aes_xts.encodeMess(x);
+	vector<string> cpXTS = {"19803A6ACF802DF18A342B2C124DD3DA"};
 	printVector(res);
+	printVector(aes_xts.decodeMess(cpXTS));
 	return 0;
 } 

@@ -136,13 +136,17 @@ public:
 
 class Preprocess{
 private:
-	string message;
 	Math math;
+	int blockSize = 16;
 public:
 	Preprocess(){}
 
-	Preprocess(string message){
-		this->message = message;
+	string toHexString(string str){
+		string res = "";
+		for (unsigned char c : str) {
+			res += toHexString(c);
+		}
+		return res;
 	}
 
 	string toHexString(int num){
@@ -162,14 +166,15 @@ public:
 		return static_cast<char>(asciiValue);
 	}
 
-	string pkcs5_pad(const string& input, int blockSize=16) {
+	//convert input -> hexstring
+	string pkcs5_pad(string originMess) {
 		string res = "";
-		for (unsigned char c : input) {
+		for (unsigned char c : originMess) {
 			res += toHexString(c);
 		}
 
 		// Thêm padding PKCS#5
-		int paddingSize = blockSize - (input.size() % blockSize);
+		int paddingSize = blockSize - (originMess.size() % blockSize);
 		for (int i = 0; i < paddingSize; i++) {
 			res += toHexString(paddingSize);
 		}
@@ -178,21 +183,23 @@ public:
 	}
 
 	// Bỏ padding PKCS#5
-	string pkcs5_unpad(string padded_data, int blockSize=16) {
-		int padSize = math.hexToDec(padded_data.back());
+	string pkcs5_unpad(string paddedData) {
+		int padSize = math.hexToDec(paddedData.back());
 		padSize += blockSize * (padSize==0);
-		padded_data.erase(padded_data.size()-padSize*2, padSize*2);
+
+		paddedData.erase(paddedData.size()-padSize*2, padSize*2);
 		string res = "";
-		for (int i=0; i+2<=padded_data.size(); i+=2) {
-			res += hexToAscii(padded_data.substr(i, 2));
+		for (int i=0; i+2<=paddedData.size(); i+=2) {
+			res += hexToAscii(paddedData.substr(i, 2));
 		}
 		return res;
 	}
 
-	vector<string> splitBlock(string message, int blockSize = 16){
+	vector<string> splitBlock(string hexStr){
+		int hexBlockSize = blockSize*2;
 		vector<string> result;
-		for (size_t i = 0; i < message.length(); i += blockSize) {
-			result.push_back(message.substr(i, blockSize));
+		for (size_t i = 0; i < hexStr.length(); i += hexBlockSize) {
+			result.push_back(hexStr.substr(i, hexBlockSize));
 		}
 		return result;
 	}
