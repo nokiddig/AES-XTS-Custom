@@ -38,7 +38,7 @@ public:
 		}
 	}
 
-	vector<string> encodeMess(vector<string> plain){
+	vector<string> encodeMess(const vector<string>& plain){
 		vector<string> result;
 		int size = plain.size();
 		string cipherI;
@@ -47,7 +47,7 @@ public:
 			result.push_back(cipherI);
 		}
 
-		string &lastBlock = plain.back();
+		string lastBlock = plain.back();
 		if (lastBlock.size() == 32){
 			cipherI = encodeBlock(lastBlock, T[size-1]);
 			result.push_back(cipherI);
@@ -113,6 +113,7 @@ int main(){
 	message = 		"0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210";
 	cipherECB = 	"ff0b844a0853bf7c6934ab4364148fb9";
 
+	//xts - dưới 16 byte -> áp dụng padding, trên 16 byte -> ko dùng padding
 	Preprocess pre;
 	auto x = pre.splitBlock(pre.toHexString("Toi yeu viet nam"));
 	printVector(x);

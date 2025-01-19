@@ -59,7 +59,7 @@ public:
 		w[2] = KEY.substr(16, 8);
 		w[3] = KEY.substr(24, 8);
 		
-    	//for (int i=4; i<44; i+=4){
+    	string RC[15] = {"","01", "02", "04", "08", "10", "20", "40", "80", "1B", "36", "6C", "D8", "AB", "4D"};
     	for (int i=1; i<=nRound; i++){
     		string g = w[i*4-1];
     		//dich vong trai 1 byte(2char)
