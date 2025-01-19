@@ -167,27 +167,39 @@ public:
 	}
 
 	//convert input -> hexstring
-	string pkcs5_pad(string originMess) {
+	string pkcs5_pad(string originMess, bool isXtsMode = false) {
 		string res = "";
 		for (unsigned char c : originMess) {
 			res += toHexString(c);
 		}
 
-		// Thêm padding PKCS#5
-		int paddingSize = blockSize - (originMess.size() % blockSize);
-		for (int i = 0; i < paddingSize; i++) {
-			res += toHexString(paddingSize);
+		if (isXtsMode = false || (isXtsMode && originMess.size() < blockSize)) {
+			// Thêm padding PKCS#5
+			int paddingSize = blockSize - (originMess.size() % blockSize);
+			for (int i = 0; i < paddingSize; i++) {
+				res += toHexString(paddingSize);
+			}
 		}
 
 		return res;
 	}
 
 	// Bỏ padding PKCS#5
-	string pkcs5_unpad(string paddedData) {
-		int padSize = math.hexToDec(paddedData.back());
-		padSize += blockSize * (padSize==0);
+	string pkcs5_unpad(vector<string> paddedData, bool isXtsMode = false) {
+		string fullCipher = "";
+		for (const auto& data : paddedData){ 
+			fullCipher += data;
+		}
+		return pkcs5_unpad(fullCipher, isXtsMode);
+	}
 
-		paddedData.erase(paddedData.size()-padSize*2, padSize*2);
+	string pkcs5_unpad(string paddedData, bool isXtsMode = false) {
+		if (isXtsMode == false || (isXtsMode && paddedData.size()==blockSize*2 && math.hexToDec(paddedData[blockSize*2-2])==0)){
+			int padSize = math.hexToDec(paddedData.back());
+			padSize += blockSize * (padSize==0);
+			paddedData.erase(paddedData.size()-padSize*2, padSize*2);
+		}
+
 		string res = "";
 		for (int i=0; i+2<=paddedData.size(); i+=2) {
 			res += hexToAscii(paddedData.substr(i, 2));
@@ -265,4 +277,5 @@ template <typename T>
 void printVector(vector<T> v){
 	for (auto x: v)
 		cout << x << " ";
+	cout << endl;
 }

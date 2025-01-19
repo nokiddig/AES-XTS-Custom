@@ -48,7 +48,7 @@ public:
 		}
 
 		string lastBlock = plain.back();
-		if (lastBlock.size() == 32){
+		if (result.empty()){
 			cipherI = encodeBlock(lastBlock, T[size-1]);
 			result.push_back(cipherI);
 		}
@@ -75,23 +75,25 @@ public:
 		vector<string> result;
 		int size = cypher.size();
 		string plainI;
-		for (int i=0; i<size-1; i++) {
+		for (int i=0; i<size-2; i++) {
 			plainI = decodeBlock(cypher[i], T[i]);
 			result.push_back(plainI);
 		}
 
 		string &lastBlock = cypher.back();
-		if (lastBlock.size() == 32){
+		if (cypher.size() == 1){
 			plainI = decodeBlock(lastBlock, T[size-1]);
 			result.push_back(plainI);
 		}
 		else { 
+			plainI = decodeBlock(cypher[size-2], T[size-1]);
+			result.push_back(plainI);
 			// thieu, can padding bang block truoc 
 			int padSize = 32-lastBlock.size();
 			string padStr = result.back().substr(32 - padSize);
 			string lastPlain = result.back().substr(0, 32 - padSize);
 
-			result.back() = encodeBlock(lastBlock + padStr, T[size-1]);
+			result.back() = decodeBlock(lastBlock + padStr, T[size-2]);
 			result.push_back(lastPlain);
 		}
 		return result;
@@ -115,13 +117,17 @@ int main(){
 
 	//xts - dưới 16 byte -> áp dụng padding, trên 16 byte -> ko dùng padding
 	Preprocess pre;
-	auto x = pre.splitBlock(pre.toHexString("Toi yeu viet nam"));
-	printVector(x);
+	string hexStringPlain = pre.pkcs5_pad("Toi rat yeu", true);
+	auto x = pre.splitBlock(hexStringPlain);
+	// auto x = pre.splitBlock(pre.toHexString("Toi rat yeu viet nam hehehehe"));
+	printVector(x); //546F6920726174207965752076696574 206E616D
 
 	AES_XTS aes_xts(key1Hex, key2Hex);
-	auto res = aes_xts.encodeMess(x);
-	vector<string> cpXTS = {"19803A6ACF802DF18A342B2C124DD3DA"};
-	printVector(res);
-	printVector(aes_xts.decodeMess(cpXTS));
+	auto en = aes_xts.encodeMess(x);
+	// printVector(en); //1BE69E9309560268C391C5D11559C691 7ADE4E33
+
+	auto de = aes_xts.decodeMess(en);
+	printVector(de);
+	cout << pre.pkcs5_unpad(de, true);
 	return 0;
 } 

@@ -19,6 +19,7 @@ private:
     string plainText = "", KEY;
     string process;
 	const string EN = "ENCODE", DE = "DECODE";
+	bool isPrintMatrix = false;
 	string w[50];
     string matrix4x4[4][4];
 	//dam bao ko tuyen tinh -> tinh ngau nhien cao
@@ -48,7 +49,7 @@ public:
 				cout << "Key error!";
 				break;
 		}
-		cout << "Key length" << KEY_LENGTH;
+		cout << "\nKey length" << KEY_LENGTH << endl;
         this->expandKey();
 	}
 
@@ -118,14 +119,16 @@ public:
     };
 
     void printMatrix4x4(){
-    	cout << "==================== \n";
-    	for (int i=0; i<4; i++){
-    		for (int j=0; j<4; j++) {
-    			cout << matrix4x4[i][j] << ' ';
+		if (isPrintMatrix){
+			cout << "==================== \n";
+			for (int i=0; i<4; i++){
+				for (int j=0; j<4; j++) {
+					cout << matrix4x4[i][j] << ' ';
+				}
+				cout << endl;
 			}
-			cout << endl;
+			cout << "====================\n";
 		}
-		cout << "====================\n";
 	}
 	
     void shiftRows(){
