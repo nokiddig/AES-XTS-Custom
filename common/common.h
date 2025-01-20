@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <iomanip>
+#define endl '\n' 
 using namespace std;
 class Math{
 public:

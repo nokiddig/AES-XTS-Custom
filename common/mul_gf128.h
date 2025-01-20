@@ -73,18 +73,3 @@ string multiplyHexStrings(const string& hex1, const string& hex2) {
     // Chuyển kết quả thành chuỗi hex
     return uint64ToHexString(result);
 }
-
-// // Hàm test
-// int main() {
-//     string hex1 = "00000000000000000000000000000007";
-//     string hex2 = "00000000000000000000000000000005";
-
-//     try {
-//         string result = multiplyHexStrings(hex1, hex2);
-//         cout << "Kết quả: " << result << endl;
-//     } catch (const exception& e) {
-//         cerr << "Lỗi: " << e.what() << endl;
-//     }
-
-//     return 0;
-// }

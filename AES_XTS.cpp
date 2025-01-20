@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
-#include "AES_ECB.h"
-#include "gen_tweak.h"
+#include "common/AES_ECB.h"
+#include "common/mul_gf128.h"
 using namespace std;
 
 #define BLOCK_SIZE 16 // 128 bits = 16 bytes
@@ -38,7 +38,7 @@ public:
 		}
 	}
 
-	vector<string> encodeMess(const vector<string>& plain){
+	vector<string> encode(const vector<string>& plain){
 		vector<string> result;
 		int size = plain.size();
 		string cipherI;
@@ -64,6 +64,7 @@ public:
 		return result;
 	}
 
+	//encode 1 khoi 16 bytes
 	string encodeBlock(string plainI, string Ti){
 		string res = math.xorStr(plainI, Ti);
 		res = aes_key1.encode(res);
@@ -71,22 +72,22 @@ public:
 		return res;
 	}
 
-	vector<string> decodeMess(vector<string> cypher){
+	vector<string> decode(vector<string> cipher){
 		vector<string> result;
-		int size = cypher.size();
+		int size = cipher.size();
 		string plainI;
 		for (int i=0; i<size-2; i++) {
-			plainI = decodeBlock(cypher[i], T[i]);
+			plainI = decodeBlock(cipher[i], T[i]);
 			result.push_back(plainI);
 		}
 
-		string &lastBlock = cypher.back();
-		if (cypher.size() == 1){
+		string &lastBlock = cipher.back();
+		if (cipher.size() == 1){
 			plainI = decodeBlock(lastBlock, T[size-1]);
 			result.push_back(plainI);
 		}
 		else { 
-			plainI = decodeBlock(cypher[size-2], T[size-1]);
+			plainI = decodeBlock(cipher[size-2], T[size-1]);
 			result.push_back(plainI);
 			// thieu, can padding bang block truoc 
 			int padSize = 32-lastBlock.size();
@@ -99,6 +100,7 @@ public:
 		return result;
 	}
 
+	//decode 1 khoi 16 bytes
 	string decodeBlock(string cipherI, string Ti){
 		string res = math.xorStr(cipherI, Ti);
 		res = aes_key1.decode(res);
@@ -117,17 +119,20 @@ int main(){
 
 	//xts - dưới 16 byte -> áp dụng padding, trên 16 byte -> ko dùng padding
 	Preprocess pre;
-	string hexStringPlain = pre.pkcs5_pad("Toi rat yeu", true);
+
+	string hexStringPlain = pre.pkcs5_pad("Toi rat yeu cong ty, toi rat yeu cong ty, toi yeu cong ty!!!", true);
 	auto x = pre.splitBlock(hexStringPlain);
-	// auto x = pre.splitBlock(pre.toHexString("Toi rat yeu viet nam hehehehe"));
-	printVector(x); //546F6920726174207965752076696574 206E616D
+	printVector(x); 
 
 	AES_XTS aes_xts(key1Hex, key2Hex);
-	auto en = aes_xts.encodeMess(x);
+	auto en = aes_xts.encode(x);
 	// printVector(en); //1BE69E9309560268C391C5D11559C691 7ADE4E33
 
-	auto de = aes_xts.decodeMess(en);
+	auto de = aes_xts.decode(en);
 	printVector(de);
 	cout << pre.pkcs5_unpad(de, true);
+	
+	
+	
 	return 0;
 } 

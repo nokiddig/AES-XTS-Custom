@@ -20,7 +20,7 @@ private:
     string process;
 	const string EN = "ENCODE", DE = "DECODE";
 	bool isPrintMatrix = false;
-	string w[50];
+	string w[60];
     string matrix4x4[4][4];
 	//dam bao ko tuyen tinh -> tinh ngau nhien cao
 public:
